@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>TRAINS!!!!</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <script src="https://www.gstatic.com/firebasejs/4.7.0/firebase.js"></script>
+    </head>
+    <body>
+<div class="container">
+    <div class="jumbotron">
+        <h1>Train Schedule</h1>
+        <p>Amtrak...travel sloooooooow!</p>
+        <p><a class="btn btn-primary btn-lg" href="https://www.amtrak.com/home.html" role="button">Learn more</a></p>
+    </div>
+    <div class="panel panel-default">
+            <!-- Default panel contents -->
+            <div class="panel-heading">Schedule</div>
+              <div class="col-lg-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Last Trains</h3>
+          </div>
+          <table class="table">
+          <div class="panel-body" id="recent-member">
+            <h2 id="name-display"></h2>
+            <h4 id="destination-display"></h4>
+            <h4 id="time-display"></h4>
+            <p id="frequency-display"></p>
+          </div>
+          </table>
+        </div>
+      </div>
+          
+            <!-- Table -->
+            <table class="table">
+              ...
+            </table>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Add Train</h3>
+        </div>
+        <div class="panel-body">
+            <form>
+                <div class="form-group">
+                  <label for="train-name">Train Name</label>
+                  <input type="text" class="form-control" id="train-name" placeholder="Train Name">
+                </div>
+                <div class="form-group">
+                  <label for="destination">Destination</label>
+                  <input type="text" class="form-control" id="destination" placeholder="Password">
+                </div>
+                <div class="form-group">
+                    <label for="time">First Train Time (In military time)</label>
+                    <input type="time" class="form-control" id="time" placeholder="Train Time">
+                </div>
+                <div class="form-group">
+                    <label for="frequency">Frequency (In minutes)</label>
+                    <input type="number" class="form-control" id="frequency" placeholder="Frequency">
+                </div>
+                <button type="submit" id="add-user" class="btn btn-default">Submit</button>
+              </form>
+        </div>
+
+      </div>
+       <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Train List</h3>
+            </div>
+            <div class="panel-body">
+                <div id="train-list"></div>
+            </div>
+          </div>
+</div>
+<!-- Most Recent Member Panel -->
+    
+ <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery.js"></script>
+  <!-- Script -->
+  <script>
+    // ========================================== START CODING BELOW!!
+    // Initialize Firebase
+    var config = {
+    apiKey: "AIzaSyBtIf6KqkZxlNUVsm18eXfJ3-sMJR40yYY",
+    authDomain: "class-project-2-c2709.firebaseapp.com",
+    databaseURL: "https://class-project-2-c2709.firebaseio.com",
+    projectId: "class-project-2-c2709",
+    storageBucket: "class-project-2-c2709.appspot.com",
+    messagingSenderId: "822480374660"
+  };
+  firebase.initializeApp(config);
+    // Create a variable to reference the database.
+    var database = firebase.database();
+    // Initial Values
+    var trainName = "";
+    var destination = "";
+    var firstTime = 0;
+    var frequency = "";
+    // Capture Button Click
+    $("#add-user").on("click", function(event) {
+      event.preventDefault();
+      // Grabbed values from text boxes
+      trainName = $("#train-name").val().trim();
+      destination = $("#destination").val().trim();
+      firstTime = $("#time").val().trim();
+      frequency = $("#frequency").val().trim();
+      // Code for handling the push
+      database.ref().push({
+        trainName: trainName,
+        destination: destination,
+        firstTime: firstTime,
+        frequency: frequency,
+        dateAdded: firebase.database.ServerValue.TIMESTAMP
+      });
+    });
+    // Firebase watcher + initial loader + order/limit HINT: .on("child_added"
+    database.ref().orderByChild("dateAdded").limitToLast(1).on("child_added", function(snapshot) {
+      // storing the snapshot.val() in a variable for convenience
+      var sv = snapshot.val();
+      // Console.loging the last user's data
+      console.log(sv.trainName);
+      console.log(sv.destination);
+      console.log(sv.firstTime);
+      console.log(sv.frequency);
+      // Change the HTML to reflect
+      $("#name-display").text(sv.trainName);
+      $("#destination-display").text(sv.destination);
+      $("#time-display").text(sv.firstTime);
+      $("#frequency-display").text(sv.frequency); $("#train-list").append("<div class='well'><span id='sv.trainName'> " + sv.trainName +
+        " </span><span id='sv.destination'> " + sv.destination +
+        " </span><span id='sv.firstTime'> " + sv.firstTime +
+        " </span><span id='sv.frequency'> " + sv.frequency + " </span></div>");
+      // Handle the errors
+    }, function(errorObject) {
+      console.log("Errors handled: " + errorObject.code);
+
+     
+    });
+
+    
+
+
+
+
+
+    
+  </script>
+        
+    </body>
+</html>
